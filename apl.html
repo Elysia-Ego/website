@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<section class="header">
+    <title>APL</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+</head>
+<h1>Practical 1</h1>
+<p><pre>
+    from PIL import Image
+    img=Image.open("butterfly.jpg")
+    img.show()
+    width, height=img.size
+    print(width, height)
+    print(img.format)
+    print(img.info)
+    img1=img.save("xyz.png")
+    img2=img.rotate(90)
+    img2.show()
+    size=(250,250,750,750)
+    img3=img.crop(size)
+    img3.show()
+    RE_SIZE(300,300)
+    img4=img.resize(RE_SIZE)
+    img4.show()
+    </pre>
+</p>
+
+<h1>Practical 2</h1>
+<p><pre>
+from PIL import Image
+import matplotlib.pyplot as plt
+img1=Image.open("butterfly.jpg")
+img2=Image.open("butterfly_2.jpeg")
+img1.paste(img2,(200,250))
+img1.show()
+histogram=img1.histogram()
+plt.hist(histogram,bins=len(histogram))
+plt.xlabel("histogram")
+plt.show()
+transposed_img=img2.transpose(Image.FLIP_LEFT_RIGHT)
+transposed_img.show()
+red,green,blue=img1.split()
+zero=red.point(lambda _: 0)
+red=Image.merge("RGB",(red,zero,zero))
+green=Image.merge("RGB",(zero,green,zero))
+blue=Image.merge("RGB",(zero,zero,blue))
+red.show()
+green.show()
+blue.show()
+img1.save("new_img.bmp")
+MAX_SIZE=(100,100)
+img2.thumbnail(MAX_SIZE)
+img2.save("thumbnail.png")
+</pre>
+</p>
+
+<h1>Practical 3</h1>
+<p><pre>
+import cv2
+import numpy as np
+img = cv2.imread("butterfly.jpg",1)
+kernel = np.ones((5,5) , dtype="uint8")
+img_erosion = cv2.erode(img, kernel, iterations=1)
+img_dilation = cv2.dilate (img, kernel, iterations=1)
+cv2.imshow("input", img)
+cv2.imshow("erosion",img_erosion)
+cv2.imshow("dilation", img_dilation)
+cv2.waitKey(0)
+</pre>
+</p>
+
+<h1>Practical 4</h1>
+<p><pre>
+import cv2
+import numpy
+def nothing(x):
+     pass
+img=numpy.zeros((512, 512, 3),numpy.uint8)
+cv2.namedWindow('image')
+cv2.createTrackbar('R', 'image', 0, 255, nothing)
+cv2.createTrackbar('G', 'image', 0, 255, nothing)
+cv2.createTrackbar('B', 'image', 0, 255, nothing)
+while(True):
+    cv2.imshow('image',img)
+    if cv2.waitKey(1)==27:
+          break
+r=cv2.getTrackbarPos('R', 'image')
+g=cv2.getTrackbarPos('G', 'image')
+b=cv2.getTrackbarPos('B', 'image')
+img[:]=[b,g,r]
+cv2.destroyAllWindows()
+</pre>
+</p>
+
+<h1>Practical 5</h1>
+<p><pre>
+import cv2
+import numpy as np
+img = cv2.imread('butterfly_2.jpeg')
+dst = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 7,
+15)
+cv2.imshow("original img",img)
+cv2.imshow("denoising_img", dst)
+</pre>
+</p>
+
+<h1>Practical 6</h1>
+<p><pre>
+import cv2
+from matplotlib import pyplot as plt
+image=cv2.imread("butterfly_2.jpeg",1)
+cv2.imshow("input", image)
+histogram=cv2.calchist([image],[0], None, [256], [0,256])
+plt.plot(histogram,color="c")
+plt.show()
+</pre>
+</p>
+
+<h1>Practical 7</h1>
+<p><pre>
+import numpy as np
+import cv2
+face_cascade = cv2.CascadeClassifier (cv2.data.haarcascade + 'haarcascadefrontalface_default.xml')
+eye_cascade = cv2.CascadeClassifier (cv2.data.haarcascade + 'haarcascade_eye.xml')
+img=cv2.imread('int.jpeg')
+gray = cv2.cvtColor (img, cv2.COLOR_BGR2GRAY)
+faces = face cascade.detectMultiScale (gray, 1.3, 5)
+for (x,y,w,h) in faces:
+    cv2. rectangle (img, (x,y), (x+w, y+h), (255,0,0),2) roi_gray = gray [y: y+h, x:x+w]
+    roi color = img[y: y+h, x:x+w]
+    eyes eye_cascade.detectMultiScale (roi_gray)
+    for (ex,ey, ew, eh) in eyes:
+       cv2.rectangle (roi_color, (ex, ey), (ex+ew, ey+eh),(0,255,0), 2)
+cv2.imshow('img', img)
+cv2.waitKey (0)
+cv2.destroyAllWindows ()
+</pre>
+</p>
+
+<h1>Practical 8</h1>
+<p><pre>
+    import cv2
+    Video = cv2.VideoCapture(“video.mp4”)
+    currentframe = 0
+    while(True):
+        retrn, frame = video.read()
+        if retrn:
+            cv2.imwrite(‘img’+str(currentframe)+’.jpg’,frame)
+            currentframe += 1
+        else:
+            break
+    video.release()
+    cv2.destroyAllWindows()
+    </pre>
+</p>
+
+<h1>Practical 9</h1>
+<p><pre>
+import cv2
+capture = cv2.VideoCapture("play.mp4")
+if capture.isOpened() is False:
+        print("Error opening video")
+frame_idx = capture.get(cv2.CAP_PROP_FRAME_COUNT)-1
+print("Starting Frame: '{}'".format(frame_idx))
+while capture.isOpened() and frame_idx >= 0:
+        capture.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+        ret, frame = capture.read()
+        if ret is True:
+            cv2.imshow('Frame in Reverse', frame)
+            frame_idx = frame_idx - 1
+            print("Next index: '{}'".format(frame_idx))
+            if cv2.waitKey(30) == ord('q'):
+                  break
+            else:
+                   break
+capture.release()
+cv2.destroyAllWindows()
+</pre>
+</p>
+
+<h1>Practical 10</h1>
+<p><pre>
+    from bing_image_downloader import downloader
+    downloader.download(“Anime”,limit=5,output_dir = “dataset”)
+    </pre>
+</p>
+
+</body>
+</html>
+
